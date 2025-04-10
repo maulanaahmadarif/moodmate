@@ -30,6 +30,12 @@ class MoodViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun updateMood(id: Int, mood: String, note: String) {
+        viewModelScope.launch {
+            dao.insertMood(MoodEntry(id = id, mood = mood, note = note))
+        }
+    }
+
     fun deleteMood(moodEntry: MoodEntry) {
         viewModelScope.launch {
             dao.deleteMood(moodEntry)
