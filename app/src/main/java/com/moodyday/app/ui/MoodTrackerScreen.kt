@@ -46,6 +46,9 @@ import com.moodyday.app.data.MoodEntry
 import com.moodyday.app.ui.components.MoodButton
 import com.moodyday.app.utils.MoodUtils
 import kotlinx.coroutines.launch
+import com.moodyday.app.BuildConfig
+import com.moodyday.app.notification.NotificationTester
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 private fun getSupportMessage(mood: String): Pair<String, String> {
@@ -324,6 +327,21 @@ fun MoodTrackerScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
+                    }
+                }
+
+                if (BuildConfig.DEBUG) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    val context = LocalContext.current
+                    TextButton(
+                        onClick = { NotificationTester.triggerTestNotification(context) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Test Notification",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             }
