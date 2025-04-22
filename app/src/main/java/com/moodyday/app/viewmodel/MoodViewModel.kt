@@ -24,15 +24,29 @@ class MoodViewModel(application: Application) : AndroidViewModel(application) {
 
     val allMoods: Flow<List<MoodEntry>> = dao.getAllMoods()
 
-    fun saveMood(mood: String, note: String) {
+    fun saveMood(mood: String, note: String, supportTitle: String? = null, supportMessage: String? = null) {
         viewModelScope.launch {
-            dao.insertMood(MoodEntry(mood = mood, note = note))
+            dao.insertMood(
+                MoodEntry(
+                    mood = mood,
+                    note = note,
+                    supportTitle = supportTitle,
+                    supportMessage = supportMessage
+                )
+            )
         }
     }
 
-    fun updateMood(id: Int, mood: String, note: String) {
+    fun updateMood(id: Int, mood: String, note: String, supportTitle: String? = null, supportMessage: String? = null) {
         viewModelScope.launch {
-            dao.insertMood(MoodEntry(id = id, mood = mood, note = note))
+            val updatedMood = MoodEntry(
+                id = id,
+                mood = mood,
+                note = note,
+                supportTitle = supportTitle,
+                supportMessage = supportMessage
+            )
+            dao.insertMood(updatedMood)
         }
     }
 
@@ -42,7 +56,7 @@ class MoodViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getMoodList(): Flow<List<MoodEntry>> {
-        return dao.getAllMoods()
+    suspend fun getMoodById(id: Int): MoodEntry? {
+        return dao.getMoodById(id)
     }
 }

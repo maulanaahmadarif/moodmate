@@ -23,7 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.moodyday.app.notification.MoodReminderScheduler
+import com.moodyday.app.notification.NotificationManager
 import com.moodyday.app.ui.AnalyticsScreen
 import com.moodyday.app.ui.MoodHistoryScreen
 import com.moodyday.app.ui.MoodTrackerScreen
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
     ) { isGranted ->
         if (isGranted) {
             // Permission granted, schedule the reminder
-            MoodReminderScheduler.scheduleDailyReminder(this)
+            NotificationManager.scheduleDailyReminder(this)
         }
     }
 
@@ -56,11 +56,11 @@ class MainActivity : ComponentActivity() {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
                 // Permission already granted, schedule the reminder
-                MoodReminderScheduler.scheduleDailyReminder(this)
+                NotificationManager.scheduleDailyReminder(this)
             }
         } else {
             // No runtime permission needed for Android 12 and below
-            MoodReminderScheduler.scheduleDailyReminder(this)
+            NotificationManager.scheduleDailyReminder(this)
         }
         
         enableEdgeToEdge()
@@ -88,12 +88,13 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable(route = "tracker") {
                                 MoodTrackerScreen(
+                                    moodViewModel = viewModel,
                                     moodEntries = moods ?: emptyList(),
-                                    onSave = { mood: String, note: String ->
-                                        viewModel.saveMood(mood, note)
+                                    onSave = { mood: String, note: String, supportTitle: String?, supportMessage: String? ->
+                                        viewModel.saveMood(mood, note, supportTitle, supportMessage)
                                     },
-                                    onUpdate = { id: Int, mood: String, note: String ->
-                                        viewModel.updateMood(id, mood, note)
+                                    onUpdate = { id: Int, mood: String, note: String, supportTitle: String?, supportMessage: String? ->
+                                        viewModel.updateMood(id, mood, note, supportTitle, supportMessage)
                                     },
                                     navigateToHistory = { navController.navigate("history") }
                                 )
@@ -104,7 +105,14 @@ class MainActivity : ComponentActivity() {
                                     moods = moods ?: emptyList(),
                                     onNavigateToEntry = { navController.navigate("tracker") },
                                     onDelete = { viewModel.deleteMood(it) },
-                                    onUndo = { mood -> viewModel.saveMood(mood.mood, mood.note) },
+                                    onUndo = { mood -> 
+                                        viewModel.saveMood(
+                                            mood = mood.mood,
+                                            note = mood.note,
+                                            supportTitle = mood.supportTitle,
+                                            supportMessage = mood.supportMessage
+                                        )
+                                    },
                                     onNavigateToAnalytics = { navController.navigate("analytics") },
                                     navigateBack = { navController.popBackStack() }
                                 )

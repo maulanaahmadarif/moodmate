@@ -256,8 +256,9 @@ fun MoodHistoryScreen(
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            onDelete(moodToDelete!!)
-                            recentlyDeletedMood = moodToDelete
+                            val deletedMood = moodToDelete!!.copy() // Make a copy to preserve all fields
+                            onDelete(deletedMood)
+                            recentlyDeletedMood = deletedMood
 
                             coroutineScope.launch {
                                 val result = snackbarHostState.showSnackbar(

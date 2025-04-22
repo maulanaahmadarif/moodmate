@@ -8,5 +8,7 @@ data class MoodEntry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val mood: String,
     val note: String,
+    val supportTitle: String? = null,
+    val supportMessage: String? = null,
     val timestamp: Long = System.currentTimeMillis()
 )

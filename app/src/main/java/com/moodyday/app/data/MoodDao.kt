@@ -13,4 +13,7 @@ interface MoodDao {
 
     @Delete
     suspend fun deleteMood(moodEntry: MoodEntry)
+
+    @Query("SELECT * FROM mood_entries WHERE id = :id")
+    suspend fun getMoodById(id: Int): MoodEntry?
 }
